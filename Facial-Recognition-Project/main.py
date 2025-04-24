@@ -24,6 +24,11 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import OneCycleLR
 
+from webcam_app import WebcamApp
+# Tkinter imports (for GUI)
+import tkinter as tk
+from tkinter import Label, Button, Frame
+
 # Add the current directory to the Python path (ensures module imports work correctly)
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -68,17 +73,9 @@ def main():
     trainer.train(num_epochs=30, early_stop_patience=10)
     
     # --- Step 6: Webcam Inference ---
-    # Define an image transformation pipeline for inference (matching training image size and normalization).
-    inference_transform = transforms.Compose([
-        transforms.Resize(image_size),
-        transforms.ToTensor(),
-        transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
-    ])
-    # Initialize the InferenceEngine with the trained model, device, transform, and class names.
-    inference_engine = InferenceEngine(model, device, transform=inference_transform, class_names=class_names)
-    # Start webcam inference with a capture interval of 10 milliseconds.
-    # (Press 'q' to exit the webcam inference window.)
-    inference_engine.webcam_inference(capture_interval=10)
+    root = tk.Tk()
+    app = WebcamApp(root, model, device, class_names, image_size)
+    root.mainloop()
 
 if __name__ == "__main__":
     main()
